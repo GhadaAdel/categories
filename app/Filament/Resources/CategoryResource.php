@@ -40,8 +40,12 @@ class CategoryResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('name')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('slug')
+                    ->searchable()
+                    ->sortable()
             ])
             ->recordUrl(
                 fn ($record) => $record->deleted_at === null
