@@ -12,6 +12,10 @@ use Filament\Tables;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Set;
+use Illuminate\Support\Str;
+use Filament\Forms\Components\FileUpload;
+use Filament\Tables\Columns\ImageColumn;
 
 class CategoryResource extends Resource
 {
@@ -27,12 +31,16 @@ class CategoryResource extends Resource
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->maxLength(60)
-                    ->label('Category Name'),
+                    ->label('Category Name')
+                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
+                    ->reactive(),
                 Forms\Components\TextInput::make('slug')
                     ->nullable()
-                    ->unique(ignoreRecord: true),
+                    ->unique(ignoreRecord: true)
+                    ->disabled(),
                 Forms\Components\Textarea::make('description')
-                    ->nullable()
+                    ->nullable(),
+                FileUpload::make('attachment')
             ]);
     }
 
@@ -45,7 +53,8 @@ class CategoryResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('slug')
                     ->searchable()
-                    ->sortable()
+                    ->sortable(),
+                ImageColumn::make('attachment')
             ])
             ->recordUrl(
                 fn ($record) => $record->deleted_at === null
