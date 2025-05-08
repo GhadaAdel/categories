@@ -14,6 +14,8 @@ class Category extends Model
         'name',
         'slug',
         'description',
-        'attachment'
+        'attachment',
+        'is_published',
+        'is_visible'
     ];
 }

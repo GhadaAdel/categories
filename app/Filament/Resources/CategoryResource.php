@@ -16,6 +16,11 @@ use Filament\Forms\Set;
 use Illuminate\Support\Str;
 use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\CheckboxColumn;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Toggle;
+use Filament\Tables\Columns\ToggleColumn;
+use Filament\Forms\Components\Section;
 
 class CategoryResource extends Resource
 {
@@ -27,20 +32,27 @@ class CategoryResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->unique(ignoreRecord: true)
-                    ->maxLength(60)
-                    ->label('Category Name')
-                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
-                    ->reactive(),
-                Forms\Components\TextInput::make('slug')
-                    ->nullable()
-                    ->unique(ignoreRecord: true)
-                    ->disabled(),
-                Forms\Components\Textarea::make('description')
-                    ->nullable(),
-                FileUpload::make('attachment')
+                Section::make('Our categories')
+                    ->description('Categories of the whole store')
+                    ->aside()
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->unique(ignoreRecord: true)
+                            ->maxLength(60)
+                            ->label('Category Name')
+                            ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
+                            ->reactive(),
+                        Forms\Components\TextInput::make('slug')
+                            ->nullable()
+                            ->unique(ignoreRecord: true)
+                            ->disabled(),
+                        Forms\Components\Textarea::make('description')
+                            ->nullable(),
+                        FileUpload::make('attachment'),
+                        Checkbox::make('is_published'),
+                        Toggle::make('is_visible')
+                    ])
             ]);
     }
 
@@ -54,7 +66,9 @@ class CategoryResource extends Resource
                 Tables\Columns\TextColumn::make('slug')
                     ->searchable()
                     ->sortable(),
-                ImageColumn::make('attachment')
+                ImageColumn::make('attachment'),
+                CheckboxColumn::make('is_published'),
+                ToggleColumn::make('is_visible')
             ])
             ->recordUrl(
                 fn ($record) => $record->deleted_at === null
