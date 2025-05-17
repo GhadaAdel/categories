@@ -4,6 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\CategoryResource\Pages;
 use App\Filament\Resources\CategoryResource\RelationManagers;
+use App\Filament\Resources\CategoryResource\Widgets\CategoriesChartWidget;
+use App\Filament\Resources\CategoryResource\Widgets\CategoriesStatsWidget;
 use App\Models\Category;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -98,6 +100,14 @@ class CategoryResource extends Resource
     {
         return [
             //
+        ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            CategoriesStatsWidget::class,
+            CategoriesChartWidget::class
         ];
     }
 
