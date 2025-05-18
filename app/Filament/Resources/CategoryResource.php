@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class CategoryResource extends Resource
 {
@@ -42,7 +43,10 @@ class CategoryResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->description( function (Category $record) {
+                        return Str::of($record->description)->limit(50);
+                    }),
                 Tables\Columns\TextColumn::make('slug')
                     ->searchable()
                     ->sortable()
