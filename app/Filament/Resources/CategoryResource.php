@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Clusters\Settings;
 use App\Filament\Resources\CategoryResource\Pages;
 use App\Filament\Resources\CategoryResource\RelationManagers;
 use App\Filament\Resources\CategoryResource\Widgets\CategoriesChartWidget;
@@ -26,6 +27,8 @@ use Filament\Forms\Components\Section;
 
 class CategoryResource extends Resource
 {
+    protected static ?string $cluster = Settings::class;
+
     protected static ?string $model = Category::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -61,6 +64,7 @@ class CategoryResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->reorderable('sort')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
