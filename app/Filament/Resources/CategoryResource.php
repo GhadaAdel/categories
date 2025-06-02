@@ -2,28 +2,32 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Forms;
+use Filament\Tables;
+use Filament\Forms\Set;
+use App\Models\Category;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
+use Filament\Resources\Resource;
 use App\Filament\Clusters\Settings;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Forms\Components\FileUpload;
+use Filament\Tables\Columns\ToggleColumn;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Tables\Columns\CheckboxColumn;
 use App\Filament\Resources\CategoryResource\Pages;
 use App\Filament\Resources\CategoryResource\RelationManagers;
 use App\Filament\Resources\CategoryResource\Widgets\CategoriesChartWidget;
 use App\Filament\Resources\CategoryResource\Widgets\CategoriesStatsWidget;
-use App\Models\Category;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Filters\TrashedFilter;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Set;
-use Illuminate\Support\Str;
-use Filament\Forms\Components\FileUpload;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Columns\CheckboxColumn;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Toggle;
-use Filament\Tables\Columns\ToggleColumn;
-use Filament\Forms\Components\Section;
+use App\Filament\Resources\CategoryResource\RelationManagers\ProductsRelationManager;
 
 class CategoryResource extends Resource
 {
@@ -41,18 +45,18 @@ class CategoryResource extends Resource
                     ->description('Categories of the whole store')
                     ->aside()
                     ->schema([
-                        Forms\Components\TextInput::make('name')
+                        TextInput::make('name')
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(60)
                             ->label('Category Name')
                             ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
                             ->reactive(),
-                        Forms\Components\TextInput::make('slug')
+                        TextInput::make('slug')
                             ->nullable()
                             ->unique(ignoreRecord: true)
                             ->disabled(),
-                        Forms\Components\Textarea::make('description')
+                        Textarea::make('description')
                             ->nullable(),
                         FileUpload::make('attachment'),
                         Checkbox::make('is_published'),
@@ -66,10 +70,10 @@ class CategoryResource extends Resource
         return $table
             ->reorderable('sort')
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('slug')
+                TextColumn::make('slug')
                     ->searchable()
                     ->sortable(),
                 ImageColumn::make('attachment'),
@@ -103,7 +107,7 @@ class CategoryResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ProductsRelationManager::class,
         ];
     }
 

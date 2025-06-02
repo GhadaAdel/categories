@@ -9,12 +9,16 @@ use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use App\Filament\Enums\Category;
 use Filament\Resources\Resource;
 use App\Filament\Clusters\Settings;
-use App\Filament\Enums\Category;
 use App\Filament\Enums\ProductType;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Forms\Components\FileUpload;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,7 +26,6 @@ use Filament\Tables\Columns\CheckboxColumn;
 use App\Filament\Resources\ProductResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\ProductResource\RelationManagers;
-use Filament\Forms\Components\Select;
 
 class ProductResource extends Resource
 {
@@ -38,20 +41,20 @@ class ProductResource extends Resource
             ->schema([
                 Section::make('Products')
                     ->schema([
-                        Forms\Components\TextInput::make('name')
+                        TextInput::make('name')
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(60)
                             ->label('Product Name')
                             ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
                             ->reactive(),
-                        Forms\Components\TextInput::make('slug')
+                        TextInput::make('slug')
                             ->nullable()
                             ->unique(ignoreRecord: true)
                             ->disabled(),
-                        Forms\Components\Textarea::make('description')
+                        Textarea::make('description')
                             ->nullable(),
-                        Forms\Components\TextInput::make('price')
+                        TextInput::make('price')
                             ->required(),
                         FileUpload::make('image'),
                         Checkbox::make('is_published'),
@@ -76,13 +79,13 @@ class ProductResource extends Resource
         return $table
             ->reorderable('sort')
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('slug')
+                TextColumn::make('slug')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('price'),
+                TextColumn::make('price'),
                 ImageColumn::make('image'),
                 CheckboxColumn::make('is_published'),
             ])
