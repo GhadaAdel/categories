@@ -14,15 +14,29 @@ class Product extends Model
         'slug',
         'description',
         'price',
-        'image',
         'is_published',
         'sort',
         'category_id',
-        'type'
+        'type',
+        'qualifications'
     ];
+
+    // protected $casts = [
+    //     'image' => 'array',
+    // ];
 
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class);
     }
 }

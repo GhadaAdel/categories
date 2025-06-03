@@ -16,6 +16,7 @@ use App\Filament\Enums\ProductType;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
@@ -56,7 +57,17 @@ class ProductResource extends Resource
                             ->nullable(),
                         TextInput::make('price')
                             ->required(),
-                        FileUpload::make('image'),
+                        Repeater::make('images')
+                            ->relationship()
+                            ->schema([
+                                FileUpload::make('image_path')
+                                    ->label('Product Image')
+                                    ->directory('product-images')
+                                    ->image()
+                                    ->required(),
+                            ])
+                            ->label('Product Images')
+                            ->addActionLabel('Add Image'),
                         Checkbox::make('is_published'),
                         Select::make('category_id')
                             ->label('Related Category')
@@ -86,7 +97,9 @@ class ProductResource extends Resource
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('price'),
-                ImageColumn::make('image'),
+                ImageColumn::make('images.image_path')
+                    ->label('Main Image')
+                    ->circular(),
                 CheckboxColumn::make('is_published'),
             ])
             ->filters([
