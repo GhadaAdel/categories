@@ -48,7 +48,8 @@ class ProductResource extends Resource
                             ->maxLength(60)
                             ->label('Product Name')
                             ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
-                            ->reactive(),
+                            ->reactive()
+                            ->debounce(500),
                         TextInput::make('slug')
                             ->nullable()
                             ->unique(ignoreRecord: true)

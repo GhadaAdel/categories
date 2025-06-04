@@ -22,7 +22,6 @@ return new class extends Migration
             $table->integer('sort')->default(0);
             $table->foreignId('category_id')->constrained('categories');
             $table->string('type');
-            $table->text('qualifications')->nullable();
             $table->timestamps();
         });
     }

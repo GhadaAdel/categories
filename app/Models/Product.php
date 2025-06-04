@@ -18,7 +18,6 @@ class Product extends Model
         'sort',
         'category_id',
         'type',
-        'qualifications'
     ];
 
     // protected $casts = [
