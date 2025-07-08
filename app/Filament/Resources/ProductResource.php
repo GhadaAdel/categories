@@ -4,36 +4,35 @@ namespace App\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
+use App\Models\Product;
 use Filament\Forms\Set;
-use App\Models\Category;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use App\Filament\Enums\Category;
 use Filament\Resources\Resource;
 use App\Filament\Clusters\Settings;
-use Filament\Forms\Components\Toggle;
+use App\Filament\Enums\ProductType;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Forms\Components\FileUpload;
-use Filament\Tables\Columns\ToggleColumn;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Columns\CheckboxColumn;
-use App\Filament\Resources\CategoryResource\Pages;
-use App\Filament\Resources\CategoryResource\RelationManagers;
-use App\Filament\Resources\CategoryResource\Widgets\CategoriesChartWidget;
-use App\Filament\Resources\CategoryResource\Widgets\CategoriesStatsWidget;
-use App\Filament\Resources\CategoryResource\RelationManagers\ProductsRelationManager;
+use App\Filament\Resources\ProductResource\Pages;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\ProductResource\RelationManagers;
 
-class CategoryResource extends Resource
+class ProductResource extends Resource
 {
     protected static ?string $cluster = Settings::class;
 
-    protected static ?string $model = Category::class;
+    protected static ?string $model = Product::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -41,29 +40,48 @@ class CategoryResource extends Resource
     {
         return $form
             ->schema([
-                Section::make('Our categories')
-                    ->description('Categories of the whole store')
-                    ->aside()
+                Section::make('Products')
                     ->schema([
                         TextInput::make('name')
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(60)
-                            ->label('Category Name')
+                            ->label('Product Name')
                             ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
-                            ->reactive(),
+                            ->reactive()
+                            ->debounce(500),
                         TextInput::make('slug')
                             ->nullable()
                             ->unique(ignoreRecord: true)
                             ->disabled(),
                         Textarea::make('description')
                             ->nullable(),
-                        FileUpload::make('attachment')
-                            ->directory('categories-images')
-                            ->image()
+                        TextInput::make('price')
                             ->required(),
+                        Repeater::make('images')
+                            ->relationship()
+                            ->schema([
+                                FileUpload::make('image_path')
+                                    ->label('Product Image')
+                                    ->directory('product-images')
+                                    ->image()
+                                    ->required(),
+                            ])
+                            ->label('Product Images')
+                            ->addActionLabel('Add Image'),
                         Checkbox::make('is_published'),
-                        Toggle::make('is_visible')
+                        Select::make('category_id')
+                            ->label('Related Category')
+                            ->required()
+                            ->relationship('category', 'name'),
+                        Select::make('type')
+                            ->label('Product Type')
+                            ->required()
+                            ->options(
+                                collect(ProductType::cases())->mapWithKeys(function ($case) {
+                                    return [$case->value => $case->getLabel()];
+                                })->toArray()
+                            ),
                     ])
             ]);
     }
@@ -79,30 +97,21 @@ class CategoryResource extends Resource
                 TextColumn::make('slug')
                     ->searchable()
                     ->sortable(),
-                ImageColumn::make('attachment'),
+                TextColumn::make('price'),
+                ImageColumn::make('images.image_path')
+                    ->label('Main Image')
+                    ->circular(),
                 CheckboxColumn::make('is_published'),
-                ToggleColumn::make('is_visible')
             ])
-            ->recordUrl(
-                fn ($record) => $record->deleted_at === null
-                    ? static::getUrl('edit', ['record' => $record])
-                    : null
-            )
             ->filters([
-                TrashedFilter::make(),
+                //
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
-                    ->visible(fn ($record) => $record->deleted_at === null),
-                Tables\Actions\DeleteAction::make(),
-                Tables\Actions\RestoreAction::make(),
-                Tables\Actions\ForceDeleteAction::make()
+                Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -110,24 +119,16 @@ class CategoryResource extends Resource
     public static function getRelations(): array
     {
         return [
-            ProductsRelationManager::class,
-        ];
-    }
-
-    public static function getWidgets(): array
-    {
-        return [
-            CategoriesStatsWidget::class,
-            CategoriesChartWidget::class
+            //
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCategories::route('/'),
-            'create' => Pages\CreateCategory::route('/create'),
-            'edit' => Pages\EditCategory::route('/{record}/edit'),
+            'index' => Pages\ListProducts::route('/'),
+            'create' => Pages\CreateProduct::route('/create'),
+            'edit' => Pages\EditProduct::route('/{record}/edit'),
         ];
     }
 }

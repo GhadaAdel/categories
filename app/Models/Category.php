@@ -16,6 +16,12 @@ class Category extends Model
         'description',
         'attachment',
         'is_published',
-        'is_visible'
+        'is_visible',
+        'sort'
     ];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }
