@@ -43,6 +43,12 @@ class ReviewResource extends Resource
                             ->relationship('user', 'name'), 
                         Textarea::make('review')
                             ->nullable(),
+                        TextInput::make('stars')
+                            ->label('Stars')
+                            ->numeric()
+                            ->minValue(0)
+                            ->maxValue(5)
+                            ->required(),
                         Toggle::make('is_approved')
                     ])
             ]);
@@ -55,6 +61,7 @@ class ReviewResource extends Resource
                 TextColumn::make('product.name'),
                 TextColumn::make('user.name'),
                 TextColumn::make('review'),
+                TextColumn::make('stars'),
                 ToggleColumn::make('is_approved'),
             ])
             ->filters([
