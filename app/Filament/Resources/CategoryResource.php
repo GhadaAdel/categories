@@ -58,7 +58,10 @@ class CategoryResource extends Resource
                             ->disabled(),
                         Textarea::make('description')
                             ->nullable(),
-                        FileUpload::make('attachment'),
+                        FileUpload::make('attachment')
+                            ->directory('categories-images')
+                            ->image()
+                            ->required(),
                         Checkbox::make('is_published'),
                         Toggle::make('is_visible')
                     ])
