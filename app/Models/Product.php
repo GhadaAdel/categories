@@ -18,6 +18,7 @@ class Product extends Model
         'sort',
         'category_id',
         'type',
+        'stock'
     ];
 
     // protected $casts = [

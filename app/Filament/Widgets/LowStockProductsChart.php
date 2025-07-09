@@ -2,30 +2,24 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\OrderItem;
+use App\Models\Product;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Facades\DB;
 
-class TopProductsChart extends ChartWidget
+class LowStockProductsChart extends ChartWidget
 {
-    protected static ?string $heading = 'Top Products Chart';
+    protected static ?string $heading = 'Low Stock Products Chart';
     protected int|string|array $columnSpan = 'full';
     protected static ?string $maxHeight = '400px';
 
     protected function getData(): array
     {
-        $topProducts = OrderItem::select('product_id', DB::raw('SUM(quantity) as total'))
-            ->groupBy('product_id')
-            ->orderByDesc('total')
-            ->with('product')
-            ->take(5)
-            ->get();
+        $lowStock = Product::where('stock', '<=', '10');
 
         return [
             'datasets' => [
                 [
-                    'label' => 'Units Sold',
-                    'data' => $topProducts->pluck('total')->toArray(),
+                    'label' => 'Low Stock',
+                    'data' => $lowStock->pluck('stock')->toArray(),
                     'backgroundColor' => [
                         '#AEC6CF', 
                         '#FFB3BA', 
@@ -41,12 +35,12 @@ class TopProductsChart extends ChartWidget
                     ],
                 ],
             ],
-            'labels' => $topProducts->pluck('product.name')->toArray(),
+            'labels' => $lowStock->pluck('name')->toArray(),
         ];
     }
 
     protected function getType(): string
     {
-        return 'bar';
+        return 'pie';
     }
 }
