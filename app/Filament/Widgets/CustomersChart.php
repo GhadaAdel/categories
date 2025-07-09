@@ -43,8 +43,7 @@ class CustomersChart extends ChartWidget
                 [
                     'label' => 'New Customers',
                     'data' => $trend->map(fn(TrendValue $value) => $value->aggregate),
-                    'borderColor' => $this->getRandomColor(0),
-                    'backgroundColor' => $this->getRandomColor(0),
+                    'backgroundColor' => $this->getAllColors(count($trend)),
                     'fill' => false,
                 ],
             ],
@@ -73,9 +72,9 @@ class CustomersChart extends ChartWidget
         ];
     }
 
-    private function getRandomColor($colorIndex): string
+    private function getAllColors(int $count): array
     {
-        $colors = [
+        $baseColors = [
             '#AEC6CF', 
             '#FFB3BA', 
             '#FFDAC1',
@@ -89,7 +88,11 @@ class CustomersChart extends ChartWidget
             '#FEE1E8'
         ];
 
-        return $colors[$colorIndex % count($colors)];
+        return array_slice(
+            array_merge(...array_fill(0, ceil($count / count($baseColors)), $baseColors)),
+            0,
+            $count
+        );
     }
 
     protected function getType(): string
