@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\CategoryResource\RelationManagers;
 
-use Filament\Forms;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
@@ -11,8 +10,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Resources\RelationManagers\RelationManager;
 
 class ProductsRelationManager extends RelationManager
@@ -29,9 +26,9 @@ class ProductsRelationManager extends RelationManager
                 TextInput::make('price')
                     ->required(),
                 Select::make('category_id')
-                            ->label('Related Category')
-                            ->required()
-                            ->relationship('category', 'name'),
+                    ->label('Related Category')
+                    ->required()
+                    ->relationship('category', 'name'),
                 Select::make('type')
                     ->label('Product Type')
                     ->required()
@@ -48,7 +45,6 @@ class ProductsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            // ->recordTitleAttribute('title')
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
             ])

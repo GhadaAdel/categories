@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Jobs\CheckLowStockJob;
+use App\Jobs\UpdateProductStockJob;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -34,7 +35,8 @@ class Order extends Model
     protected static function booted()
     {
         static::updated(function (Order $order) {
-            if ($order->isDirty('status') && $order->status === 'shipped') {
+            if ($order->isDirty('status') && $order->status === 'completed') {
+                UpdateProductStockJob::dispatch($order);
                 CheckLowStockJob::dispatch($order);
             }
         });
