@@ -82,6 +82,9 @@ class ProductResource extends Resource
                                     return [$case->value => $case->getLabel()];
                                 })->toArray()
                             ),
+                        TextInput::make('stock')
+                            ->label('Stock')
+                            ->required()
                     ])
             ]);
     }
@@ -101,6 +104,7 @@ class ProductResource extends Resource
                 ImageColumn::make('images.image_path')
                     ->label('Main Image')
                     ->circular(),
+                TextColumn::make('stock'),
                 CheckboxColumn::make('is_published'),
             ])
             ->filters([
