@@ -40,7 +40,7 @@ class UserResource extends Resource
                 Select::make('roles')
                     ->relationship('roles', 'name')
                     ->preload()
-                    ->label('Roles'),
+                    ->label('Role'),
             ]);
     }
 
@@ -55,7 +55,6 @@ class UserResource extends Resource
                 TextColumn::make('roles.name')
                     ->label('Roles')
                     ->badge()
-                    ->separator(', ')
                     ->sortable(),
             ])
             ->filters([
