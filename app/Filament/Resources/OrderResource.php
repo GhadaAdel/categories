@@ -99,6 +99,14 @@ class OrderResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('Download Invoice')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('success')
+                    ->url(fn ($record) => route('orders.invoice', $record->id))
+                    ->label('Invoice')
+                    ->tooltip('Download PDF invoice')
+                    ->visible(fn ($record) => $record->status === 'completed')
+                    ->openUrlInNewTab()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -120,6 +128,7 @@ class OrderResource extends Resource
             'index' => Pages\ListOrders::route('/'),
             'create' => Pages\CreateOrder::route('/create'),
             'edit' => Pages\EditOrder::route('/{record}/edit'),
+            'view' => Pages\ViewOrder::route('/{record}'),
         ];
     }
 }
