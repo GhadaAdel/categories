@@ -98,6 +98,7 @@ class OrderResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('Download Invoice')
                     ->icon('heroicon-o-document-arrow-down')
